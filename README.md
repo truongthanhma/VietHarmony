@@ -8,7 +8,7 @@ Abstract: This study centers on Vietnamese traditional music genres, including _
 ![Framework](https://github.com/truongthanhma/VietHarmony/blob/main/VietHarmony.png "Framework")
 
 ## Dataset:
-[Link:] (https://drive.google.com/drive/folders/1-0dMpfNMSG_1RQyCFrLkMG7dwVgd3NFL?usp=sharing)
+[Link:]: https://drive.google.com/drive/folders/1-0dMpfNMSG_1RQyCFrLkMG7dwVgd3NFL?usp=sharing
 
 ## VietHarmony Application:
 ![App1](https://github.com/truongthanhma/VietHarmony/blob/main/Images/1000006591.jpg "Interface 1")
