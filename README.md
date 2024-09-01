@@ -9,7 +9,8 @@ Abstract: This study centers on Vietnamese traditional music genres, including _
 
 ## Dataset:
 [Link:]: https://drive.google.com/drive/folders/1-0dMpfNMSG_1RQyCFrLkMG7dwVgd3NFL?usp=sharing
-
+## Models:
+[Link:]: https://drive.google.com/drive/folders/12x9BQ6MUSrqoYBYQK34WaQ6b0ODRKC8K?usp=sharing
 ## VietHarmony Application:
 ![App1](https://github.com/truongthanhma/VietHarmony/blob/main/Images/1000006591.jpg "Interface 1")
 ![App2](https://github.com/truongthanhma/VietHarmony/blob/main/Images/1000006592.jpg "Interface 2")
