@@ -1,0 +1,10 @@
+tensorflow
+keras
+Flask==2.0.1
+numpy==1.23.5
+matplotlib==3.7.1
+librosa==0.9.1
+opencv-python==4.7.0.72
+soundfile==0.12.1
+owlready2==0.44
+h5py>=3.8.0

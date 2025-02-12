@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VietHarmony</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <style>
+      /* Thêm CSS cho tabs */
+      .tab {
+        overflow: hidden;
+        border: 1px solid #ccc;
+        background-color: #f1f1f1;
+      }
+
+      /* Thêm CSS cho buttons trong tabs */
+      .tab button {
+        background-color: inherit;
+        float: left;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        padding: 14px 16px;
+        transition: 0.3s;
+        font-size: 17px;
+      }
+
+      /* Thay đổi màu nền của buttons khi hover */
+      .tab button:hover {
+        background-color: #ddd;
+      }
+
+      /* Tạo class active cho tablinks */
+      .tab button.active {
+        background-color: #ccc;
+      }
+
+      /* Thêm CSS cho nội dung của tabs */
+      .tabcontent {
+        display: none;
+        padding: 6px 12px;
+        border: 1px solid #ccc;
+        border-top: none;
+      }  
+    </style>
+  </head>
+  <body>
+    <a href="/" class="no-wrap-link">
+        <h1>VietHarmony APP</h1>
+    </a>
+    
+    <div class="grid-container">
+      <div class="grid-item">
+        <a href="https://vi.wikipedia.org/wiki/Ca_tr%C3%B9" target="_blank">
+          <img
+            src="https://imagevietnam.vnanet.vn//MediaUpload/Org/2022/12/08/148-10-31-3.jpg"
+            alt="Ca trù"
+          />
+        </a>
+        <figcaption>Ca trù</figcaption>
+      </div>
+      <div class="grid-item">
+        <a href="https://vi.wikipedia.org/wiki/C%E1%BA%A3i_l%C6%B0%C6%A1ng" target="_blank">
+          <img
+            src="https://toquoc.mediacdn.vn/280518851207290880/2023/9/18/cai-luong-3-16950302364072109936010.jpeg"
+            alt="Cải Lương"
+          />
+        </a>
+        <figcaption>Cải Lương</figcaption>
+      </div>
+      <div class="grid-item">
+        <a href="https://vi.wikipedia.org/wiki/Ch%C3%A8o" target="_blank">
+          <img
+            src="https://nld.mediacdn.vn/291774122806476800/2021/11/2/8-hinhbancong-thay-1635861315265132362888.jpg"
+            alt="Chèo"
+          />
+        </a>
+        <figcaption>Chèo</figcaption>
+      </div>
+      <div class="grid-item">
+        <a
+          href="https://vi.wikipedia.org/wiki/H%C3%A1t_B%E1%BA%A3_tr%E1%BA%A1o"
+          target="_blank"
+        >
+          <img
+            src="https://image.vietnamnews.vn/uploadvnnews/Article/2018/2/23/Le-hoi-Cau-Ngu-Da-Nang-Cac-su-kien-Da-Nang-201767851851PM.jpg"
+            alt="Hát bả trạo"
+          />
+        </a>
+        <figcaption>Hát bả trạo</figcaption>
+      </div>
+      <div class="grid-item">
+        <a
+          href="https://vi.wikipedia.org/wiki/Ch%E1%BA%A7u_v%C4%83n"
+          target="_blank"
+        >
+          <img
+            src="https://vnn-imgs-f.vgcloud.vn/2021/04/18/22/dac-sac-lien-hoa-hat-van-chau-van-toan-quoc-2021.jpg"
+            alt="Hát chầu văn"
+          />
+        </a>
+        <figcaption>Hát chầu văn</figcaption>
+      </div>
+      <div class="grid-item">
+        <a
+          href="https://vi.wikipedia.org/wiki/H%C3%A1t_xoan"
+          target="_blank"
+        >
+          <img
+            src="https://bvhttdl.mediacdn.vn/documents/491813/882271/Xoan+15+-+1183.jpg"
+            alt="Hát xoan"
+          />
+        </a>
+        <figcaption>Hát xoan</figcaption>
+      </div>
+      
+      <div class="grid-item">
+        <a href="https://vi.wikipedia.org/wiki/H%C3%B2" target="_blank">
+          <img
+            src="https://cattour.vn/images/upload/images/Mien%20Tay/gioi-thieu-mien-tay/song-nuoc-2.png"
+            alt="Hò"
+          />
+        </a>
+        <figcaption>Hò</figcaption>
+      </div>
+      <div class="grid-item">
+        <a
+          href="https://vi.wikipedia.org/wiki/Nh%C3%A3_nh%E1%BA%A1c_cung_%C4%91%C3%ACnh_Hu%E1%BA%BF"
+          target="_blank"
+        >
+          <img
+            src="https://reviewvilla.vn/wp-content/uploads/2022/06/nha-nhac-cung-dinh-hue-3.jpg"
+            alt="Nhạc cung đình"
+          />
+        </a>
+        <figcaption>Nhạc cung đình</figcaption>
+      </div>
+      <div class="grid-item">
+        <a
+          href="https://vi.wikipedia.org/wiki/%C4%90%E1%BB%9Dn_ca_t%C3%A0i_t%E1%BB%AD_Nam_B%E1%BB%99"
+          target="_blank"
+        >
+          <img
+            src="https://lacvietaudio.com/wp-content/uploads/2022/11/Don-ca-tai-tu-tieng-anh-la-gi.jpg"
+            alt="Nhạc tài tử"
+          />
+        </a>
+        <figcaption>Nhạc tài tử</figcaption>
+      </div>
+      <div class="grid-item">
+        <a href="https://vi.wikipedia.org/wiki/Quan_h%E1%BB%8D" target="_blank">
+          <img
+            src="https://hoangthanhthanglong.vn/wp-content/uploads/2023/05/quanho1.jpg"
+            alt="Quan họ"
+          />
+        </a>
+        <figcaption>Quan họ</figcaption>
+      </div>
+      <div class="grid-item">
+        <a href="https://vi.wikipedia.org/wiki/Tu%E1%BB%93ng" target="_blank">
+          <img
+            src="https://danangfantasticity.com/wp-content/uploads/2019/07/nha-hat-tuong-nguyen-hien-dinh-chuong-trinh-nghe-thuat-truyen-thong-hon-viet-01.jpg"
+            alt="Tuồng"
+          />
+        </a>
+        <figcaption>Tuồng</figcaption>
+      </div>
+      <div class="grid-item">
+        <a href="https://vi.wikipedia.org/wiki/X%E1%BA%A9m" target="_blank">
+          <img
+            src="https://cdnmedia.baotintuc.vn/Upload/0EyEGnQWcAZSg4tgdmWKkg/files/xam%20(3).jpg"
+            alt="Xẩm"
+          />
+        </a>
+        <figcaption>Xẩm</figcaption>
+      </div>
+    </div>
+
+    <div class="container">
+      <!-- Phần tải lên tệp âm thanh -->
+      <form
+        id="upload-form"
+        action="/upload"
+        method="POST"
+        enctype="multipart/form-data"
+      >
+        <label for="audio-input" class="custom-file-upload">
+          <input
+            class="input"
+            type="file"
+            id="audio-input"
+            name="audio"
+            accept=".wav"
+            onchange="validateAudioFile(this)"
+          />
+        </label>
+        <button type="submit" class="classify-button">Dự đoán</button>
+      </form>
+
+      <!-- Phần hiển thị kết quả -->
+      {% if category %}
+      <div class="result">
+        <div class="result-flex">
+          <div class="result-item">
+            <h3 class="youtube-header">Âm thanh kiểm tra:</h3>
+            <audio controls class="audio-player">
+              <source src="{{ audio_path }}" type="audio/wav" />
+              Your browser does not support the audio element.
+            </audio>
+          </div>
+          <div class="result-item">
+            <h3 class="spectrogram-header">Ảnh Spectrogram:</h3>
+            <div class="spectrogram-container">
+              <img
+                src="{{ segment_img_paths }}"
+                alt="Best Spectrogram"
+                class="best-spectrogram"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="tab">
+          <button class="tablinks" onclick="openTab(event, 'resultsTab')">
+            Kết quả
+          </button>
+          <button class="tablinks" onclick="openTab(event, 'ontologyTab')">
+            Ontology
+          </button>
+        </div>
+        <div id="resultsTab" class="tabcontent">
+          <h2>Kết quả dự đoán</h2>
+          
+          <p class="category">
+            Dòng nhạc được phân loại là: <strong>{{ category }} </strong>
+          </p>
+          <p class="confidence">
+            Độ chính xác cao nhất:
+            <strong>{{ highest_accuracy_common|round(2) }}% </strong>
+          </p>
+          <p class="confidence">
+            Độ chính xác trung bình:
+            <strong>{{ confidence_common|round(2) }}% </strong>
+          </p>
+          <p class="median-confidence">
+            Độ chính xác trung vị:
+            <strong>{{ median_confidence_common|round(2) }}% </strong>
+          </p>
+          <p class="description">
+            Thông tin về dòng nhạc: {{ music_description }}
+            <a href="{{ info_link }}" target="_blank">Xem thêm chi tiết</a>
+          </p>
+          <h3 class="youtube-header">Video liên quan</h3>
+          <div class="youtube-video">
+            {% for link in youtube_links %}
+            <iframe
+              width="360"
+              height="200"
+              src="{{ link.replace('watch?v=', 'embed/') }}"
+              frameborder="0"
+              allowfullscreen
+            ></iframe>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="ontology-info">
+            <div id="ontologyTab" class="tabcontent">
+                <!-- Phần Ontology -->
+                <h3>Thông tin từ ontology</h3>
+    
+                    <div class="tab_onto">
+                        <button class="tablinks_onto" onclick="openCity(event, 'mt')">Mô tả</button>
+                        <button class="tablinks_onto" onclick="openCity(event, 'London')">Là của dân tộc</button>
+                        <button class="tablinks_onto" onclick="openCity(event, 'Paris')">Có nguồn gốc từ</button>
+                        <button class="tablinks_onto" onclick="openCity(event, 'Tokyo')">Là nhạc của</button>
+                        <button class="tablinks_onto" onclick="openCity(event, 'tdn')">Thuộc dòng nhạc</button>
+                        <button class="tablinks_onto" onclick="openCity(event, 'tptb')">Các tác phẩm tiêu biểu</button>
+                        
+                    </div>
+                    <div id="container_content">
+                        <div id="mt" class="tabcontent_onto">
+                            <h4>Mô tả:</h4>
+                                <p>{{ ontology_info[0]["Mô tả"] }}</p>
+                        </div>
+                        <div id="London" class="tabcontent_onto">
+                            <h4>Là của dân tộc:</h4>
+                                {% for dan_toc in ontology_info[0]["Là của dân tộc"] %}
+                                    <p>{{ dan_toc }}</p>
+                                {% endfor %}
+                        </div>
+                        
+                        <div id="Paris" class="tabcontent_onto">
+                            <h4>Có nguồn gốc từ:</h4>
+                            {% for nguon_goc in ontology_info[0]["Có nguồn gốc từ"] %}
+                            <p>{{ nguon_goc }}</p>
+                            {% endfor %}
+                        </div>
+                        
+                        <div id="Tokyo" class="tabcontent_onto">
+                            <h4>Là nhạc của:</h4>
+                            {% for nhac_cua in ontology_info[0]["Là nhạc của"] %}
+                            <p>{{ nhac_cua }}</p>
+                            {% endfor %}
+                        </div>
+                        <div id="tdn" class="tabcontent_onto">
+                            <h4>Thuộc dòng nhạc:</h4>
+                            {% for dong_nhac in ontology_info[0]["Thuộc dòng nhạc"] %}
+                            <p>{{ dong_nhac }}</p>
+                            {% endfor %}
+                        </div>
+                        <div id="tptb" class="tabcontent_onto">
+                            <h4>Các tác phẩm tiêu biểu:</h4>
+                            {% for info in ontology_info %}
+                            <h4>Tác phẩm {{ loop.index }}</h4>
+                            <p>Tên tác phẩm: {{ info["Tên tác phẩm"] }}</p>
+                            <p>Của tác giả: {{ info["Của tác giả"] }}</p>
+                            <p>
+                                Link bài hát:
+                                <a href="{{ info['Link bài hát'] }}" target="_blank"
+                                >{{ info["Link bài hát"] }}</a
+                                >
+                            </p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <img src="https://media.loveitopcdn.com/3807/la-co-viet-nam-vector-1.png" alt="Cờ Việt Nam" width="1" height="1">
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+            </div>  
+          </div>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+    <script>
+      function openTab(evt, tabName) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for (i = 0; i < tabcontent.length; i++) {
+          tabcontent[i].style.display = "none";
+        }
+        tablinks = document.getElementsByClassName("tablinks");
+        for (i = 0; i < tablinks.length; i++) {
+          tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+        document.getElementById(tabName).style.display = "block";
+        evt.currentTarget.className += " active";
+      }
+      document.getElementById("resultsTab").style.display = "block";
+
+      function openCity(evt, cityName) {
+        var i, tabcontent_onto, tablinks_onto;
+        tabcontent_onto = document.getElementsByClassName("tabcontent_onto");
+        for (i = 0; i < tabcontent_onto.length; i++) {
+            tabcontent_onto[i].style.display = "none";
+        }
+        tablinks_onto = document.getElementsByClassName("tablinks_onto");
+        for (i = 0; i < tablinks_onto.length; i++) {
+            tablinks_onto[i].className = tablinks_onto[i].className.replace(" active", "");
+        }
+        document.getElementById(cityName).style.display = "block";
+        evt.currentTarget.className += " active";
+        }
+        function showDefaultTabOnto() {
+            var defaultTabOnto = document.getElementById("mt"); // ID của tab mặc định
+            var tabcontent_onto = document.getElementsByClassName("tabcontent_onto");
+
+            // Ẩn tất cả các tabcontent_onto trước khi hiển thị tab mặc định
+            for (var i = 0; i < tabcontent_onto.length; i++) {
+            tabcontent_onto[i].style.display = "none";
+            }
+
+            if (defaultTabOnto) {
+            defaultTabOnto.style.display = "block";
+            }
+        }
+
+        // ... (các đoạn mã khác)
+
+        // Gọi hàm showDefaultTabOnto khi trang được load
+        window.addEventListener("load", function () {
+            showDefaultTabOnto();
+        });
+        
+      function validateAudioFile(input) {
+        const maxDuration = 300; // 5 phút (5 * 60 giây)
+        const file = input.files[0];
+
+        if (file) {
+          const objectURL = URL.createObjectURL(file);
+          const audioElement = new Audio(objectURL);
+
+          audioElement.addEventListener("loadedmetadata", function () {
+            const duration = audioElement.duration;
+
+            if (duration > maxDuration) {
+              alert(
+                "Tệp âm thanh quá dài. Vui lòng chọn tệp âm thanh dưới 5 phút."
+              );
+              input.value = ""; // Xóa tệp đã chọn
+            }
+          });
+        }
+      }
+      document
+        .getElementById("upload-form")
+        .addEventListener("submit", function (event) {
+          // Hiển thị phần spinner và thông báo "Đang xử lý" khi nhấn nút Phân loại
+          document.getElementById("processing").style.display = "block";
+
+          // Sau khi hiển thị phần kết quả, load lại trang
+          location.reload();
+        });
+
+      // Sử dụng sự kiện "load" để cuộn xuống phần kết quả sau khi trang đã load lại
+      window.addEventListener("load", function () {
+        const resultSection = document.querySelector(".result");
+        resultSection.scrollIntoView({ behavior: "smooth" });
+      });
+    </script>
+  </body>
+
+  <footer>
+    <p class="author-text">Author: HuyBu</p>
+  </footer>
+</html>
