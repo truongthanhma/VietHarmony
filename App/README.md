@@ -1,4 +1,4 @@
-# VietnamPrime App
+# VietHarmony App
 
 ## Introduction
 
