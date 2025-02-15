@@ -10,6 +10,7 @@ import os
 import statistics 
 from owlready2 import *
 import os
+from borda_score import borda_score
 
 os.environ["KERAS_BACKEND"] = "tensorflow"
 # os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
@@ -21,7 +22,7 @@ path = "./Spectrograms/"
 categories = ['Ca_tru', 'Cai_luong', 'Cheo', 'Exception', 'Hat_ba_trao', 'Hat_chau_van', 'Hat_xoan', 'Ho',
               'Nhac_cung_dinh', 'Nhac_tai_tu', 'Quan_ho', 'Tuong', 'Xam']
 
-# Load các mô hình
+# Load models
 MODEL_PATHS = [
     './Model/DenseNet169_128x128_bs32_10s_ver2.h5',
     './Model/ResNet50_128x128_bs32_10s_ver2.h5',
@@ -30,17 +31,29 @@ MODEL_PATHS = [
 
 models = [load_model(model_path, compile=True) for model_path in MODEL_PATHS]
 
-# Đọc thông tin từ tập tin
+# Read music information from text file
 music_info = {}
-with open('music_info.txt', 'r', encoding='utf-8') as f:
-    for line in f:
-        parts = line.strip().split(':')
-        if len(parts) == 2:
-            category = parts[0].strip()
-            info = parts[1].strip()
-            music_info[category] = info
+try:
+    with open('music_info.txt', 'r', encoding='utf-8') as f:
+        for line in f:
+            line = line.strip()  
+            if not line:  
+                continue
 
-# Đọc liên kết YouTube từ các tập tin trong thư mục youtube_links
+            parts = line.split(':')
+            if len(parts) >= 2:  
+                category = parts[0].strip()
+                info = ':'.join(parts[1:]).strip() 
+                music_info[category] = info
+            else:
+                print(f"Warning: Skipping line with invalid format: {line}") 
+
+except FileNotFoundError:
+    print("Error: music_info.txt not found.")
+except Exception as e:
+    print(f"Error reading music_info.txt: {e}")
+
+# Read YouTube links from text files
 youtube_links = {}
 for class_name in categories:
     link_file_path = f'./youtube_links/{class_name}.txt'
@@ -48,9 +61,7 @@ for class_name in categories:
         links = f.readlines()
         youtube_links[class_name] = [link.strip() for link in links]
 
-# Đọc đường dẫn từ tệp văn bản
-
-
+# Read music information from text file
 def read_info_link(class_name):
     info_path = f'./class_info/{class_name}.txt'
     with open(info_path, 'r') as file:
@@ -84,78 +95,29 @@ def cut_wav_file(input_file, output_directory, duration):
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
 
-    # Đọc file âm thanh WAV đầu vào
+    # Read the input audio file
     data, samplerate = sf.read(input_file)
 
-    # Tính toán số lượng phần cần cắt
+    # Calculate the number of parts to split the audio file into
     num_parts = int(len(data) / (samplerate * duration))
 
     count = 0
     segment_parts = []
-    # Cắt file âm thanh thành các phần nhỏ
+    # Split the audio file into parts
     for i in range(num_parts):
         start = i * samplerate * duration
         end = min((i + 1) * samplerate * duration, len(data))
         part = data[start:end]
 
-        # Tạo tên tệp đầu ra cho từng phần
+        # Create the output file path
         output_file = output_directory + '/test{}.wav'.format(count)
         count += 1
 
-        # Ghi phần âm thanh nhỏ vào tệp đầu ra
+        # Write the part to the output file
         sf.write(output_file, part, samplerate)
         segment_parts.append(output_file)
 
     return segment_parts
-
-
-# Hàm tính điểm Borda
-def borda_score(rankings, common_labels):
-    """
-    Tính điểm Borda cho các lớp dựa trên thứ hạng, xử lý đồng hạng.
-
-    :param rankings: Danh sách các danh sách thứ hạng của các lớp trong các trường hợp.
-                     Mỗi phần tử của danh sách là một từ điển với tên lớp là khóa và số đơn vị là giá trị.
-                     Ví dụ: [{'A': 3, 'B': 2, 'C': 0, 'D': 1}, ...]
-    :param common_labels: Danh sách các lớp chung giữa các mô hình.
-    :return: Từ điển chứa tổng điểm Borda của mỗi lớp.
-    """
-    total_scores = {}
-
-    for ranking in rankings:
-        # Sắp xếp các lớp theo số lượng đơn vị (từ cao đến thấp)
-        sorted_classes = sorted(
-            ranking.items(), key=lambda x: x[1], reverse=True)
-
-        # Khởi tạo điểm cho mỗi thứ hạng
-        n = len(common_labels)  # Số lượng lớp chung
-        scores = [n - i - 1 for i in range(n)]  # Điểm Borda (n-1, n-2,..., 0)
-
-        # Xử lý đồng hạng
-        current_rank = 0
-        while current_rank < len(sorted_classes):
-            same_rank = [sorted_classes[current_rank]]
-            for next_rank in range(current_rank + 1, len(sorted_classes)):
-                if sorted_classes[next_rank][1] == sorted_classes[current_rank][1]:
-                    same_rank.append(sorted_classes[next_rank])
-                else:
-                    break
-
-            # Tính điểm cho các lớp đồng hạng
-            avg_score = sum(
-                scores[current_rank:current_rank + len(same_rank)]) / len(same_rank)
-
-            # Gán điểm cho các lớp đồng hạng
-            for cls, _ in same_rank:
-                if cls in total_scores:
-                    total_scores[cls] += avg_score
-                else:
-                    total_scores[cls] = avg_score
-
-            current_rank += len(same_rank)
-
-    return total_scores
-
 
 @app.route('/')
 def index():
@@ -177,13 +139,13 @@ def get_audio(segment_number):
 @app.route('/upload', methods=['POST'])
 def upload():
     if 'audio' not in request.files:
-        return "Không tìm thấy tệp âm thanh!"
+        return "Audio file not found!"
 
     audio_file = request.files['audio']
     if audio_file.filename == '':
-        return "Chưa chọn tệp âm thanh!"
+        return "No audio file selected!"
 
-    # Xóa tất cả các tệp trong thư mục uploads/audio_cut
+    # Delete all .wav files in the uploads directory
     cut_directory = 'uploads/audio_cut'
     for file in os.listdir(cut_directory):
         file_path = os.path.join(cut_directory, file)
@@ -191,9 +153,9 @@ def upload():
             if os.path.isfile(file_path):
                 os.unlink(file_path)
         except Exception as e:
-            print(f"Không thể xóa tệp {file_path}: {e}")
+            print(f"Unable to delete file {file_path}: {e}")
 
-    # Xóa tất cả các tệp .png trong thư mục static
+    # Delete all .png files in the static directory
     static_directory = 'static'
     for file in os.listdir(static_directory):
         if file.endswith('.png'):
@@ -202,16 +164,15 @@ def upload():
                 if os.path.isfile(file_path):
                     os.unlink(file_path)
             except Exception as e:
-                print(f"Không thể xóa tệp {file_path}: {e}")
+                print(f"Unable to delete file {file_path}: {e}")
 
     audio_file.save('uploads/audio.wav')
     segment_parts = cut_wav_file('uploads/audio.wav', 'uploads/audio_cut', 10)
 
-    # Khởi tạo danh sách lưu kết quả dự đoán của mỗi mô hình
     model_results = []
     computation_time = []
     for i, model in enumerate(models):
-        print(f"Đang sử dụng mô hình: {MODEL_PATHS[i]}")
+        print(f"Using model: {MODEL_PATHS[i]}")
         segment_predictions = []
         for i, segment_part in enumerate(segment_parts):
             start = time.time()
@@ -227,22 +188,22 @@ def upload():
             confidence = pred[0][np.argmax(pred)] * 100
 
             print(
-                f"Segment {i + 1}: Nhãn: {class_name}, Độ chính xác: {confidence}%")
+                f"Segment {i + 1}: Label: {class_name}, Accuracy: {confidence}%")
 
             # print(f'Time: {time.time() - start}')
             computation_time.append(time.time() - start)
 
             segment_predictions.append(
                 {'segment_number': i, 'class_name': class_name, 'confidence': confidence, 'img_path': img_path})
-        # Lưu trữ kết quả dự đoán của mô hình hiện tại
+        # Save the predictions for the model
         model_results.append(segment_predictions)
 
     print("time: ", statistics.mean(computation_time))
 
-    # Tính điểm Borda cho mỗi mô hình
+    # Calculate Borda ranking
     borda_rankings = []
     for model_prediction in model_results:
-        # Tính số lần xuất hiện của mỗi thể loại
+        # Calculate the Borda ranking for each model
         class_counts = {}
         for i, segment_prediction in enumerate(model_prediction):
             class_name = segment_prediction['class_name']
@@ -251,59 +212,44 @@ def upload():
             else:
                 class_counts[class_name] = 1
         borda_rankings.append(class_counts)
-        # In chi tiết Borda ranking của mỗi model
+        # Print the Borda ranking for the model
         print(f"Borda ranking for model i: {class_counts}")
-    # Hợp nhất các nhãn chung từ 3 mô hình
     common_labels = set()
     for ranking in borda_rankings:
         common_labels.update(ranking.keys())
-    # Tính điểm Borda cho mỗi thể loại
     borda_results = borda_score(borda_rankings, common_labels)
-    # In chi tiết điểm Borda của mỗi thể loại
     print(f"Borda results: {borda_results}")
 
-    # Chọn thể loại có tổng điểm cao nhất
     most_common_label = max(borda_results, key=borda_results.get)
-    print(f"Dòng nhạc: {most_common_label}")
+    print(f"Music genre: {most_common_label}")
 
-    # Tìm độ chính xác cao nhất trong mảng các kết quả có nhãn trùng với nhãn xuất hiện nhiều nhất
     most_common_results = [
         result for result in segment_predictions if result['class_name'] == most_common_label]
     highest_accuracy_common = max(
         most_common_results, key=lambda x: x['confidence'])['confidence']
 
-    # Tính độ chính xác trung bình của nhãn cao nhất
     total_accuracy_common = sum(
         result['confidence'] for result in most_common_results) / len(most_common_results)
 
-    # Tính giá trị trung vị của mảng độ chính xác của nhãn cao nhất
     last_segment_confidences_common = [
         result['confidence'] for result in most_common_results]
     median_confidence_common = statistics.median(
         last_segment_confidences_common)
 
-    # Đọc thông tin từ tệp văn bản cho class_name
     info_link = read_info_link(most_common_label)
     info_music = read_info_music(most_common_label)
-    music_description = music_info.get(most_common_label, "Không có thông tin")
+    music_description = music_info.get(most_common_label, "No information")
 
     audio_path = f'uploads/audio.wav?t={int(time.time())}'
 
-    # Định nghĩa đường dẫn ảnh cho đoạn phổ biến nhất
     segment_img_paths = f'static/spectrogram{most_common_results[-1]["segment_number"]}.png'
 
-    # Tạo danh sách lưu thông tin từ ontology
     ontology_info = []
 
-    # Sử dụng đường dẫn tới ontology của bạn
-    # ontology_path = "./ontology/VIPRIME.owl"
-    ontology_path = "./ontology/VIPRIME.owl"
+    # Load ontology
+    ontology_path = "./ontology/VIPRIME_en.owl"
     onto = get_ontology(ontology_path).load()
 
-    # Thực hiện suy luận với trình suy luận mặc định
-    # sync_reasoner(infer_property_values=True)
-
-    # Đặt giá trị mặc định cho biến music_type
     music_type = None
 
     if most_common_label == 'Ca_tru':
@@ -343,7 +289,6 @@ def upload():
         ontology["Mô tả"] = ""
         ontology_info.append(ontology)
     else:
-        # Truy cập các individuals và properties
         label_list = list(onto.search(type=music_type))
 
         for individual in label_list:
